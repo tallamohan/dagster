@@ -332,6 +332,15 @@ class AssetObservation(
             tags=self.tags,
         )
 
+    def with_tags(self, tags: Optional[Mapping[str, str]]) -> "AssetObservation":
+        return AssetObservation(
+            asset_key=self.asset_key,
+            description=self.description,
+            metadata=self.metadata,
+            partition=self.partition,
+            tags=tags,
+        )
+
 
 UNDEFINED_ASSET_KEY_PATH = ["__undefined__"]
 
@@ -471,6 +480,15 @@ class AssetMaterialization(
             metadata=metadata,
             partition=self.partition,
             tags=self.tags,
+        )
+
+    def with_tags(self, tags: Optional[Mapping[str, str]]) -> "AssetMaterialization":
+        return AssetMaterialization(
+            asset_key=self.asset_key,
+            description=self.description,
+            metadata=self.metadata,
+            partition=self.partition,
+            tags=tags,
         )
 
 
