@@ -38,6 +38,13 @@ class BulkActionStatus(Enum):
         return BulkActionStatus(graphql_str)
 
 
+BULK_ACTION_COMPLETED_STATUSES = [
+    BulkActionStatus.COMPLETED,
+    BulkActionStatus.FAILED,
+    BulkActionStatus.CANCELED,
+]
+
+
 @whitelist_for_serdes
 class PartitionBackfill(
     NamedTuple(

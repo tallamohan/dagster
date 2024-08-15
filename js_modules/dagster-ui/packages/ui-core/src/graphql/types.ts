@@ -2609,6 +2609,7 @@ export type Mutation = {
   resetSchedule: ScheduleMutationResult;
   resetSensor: SensorOrError;
   resumePartitionBackfill: ResumeBackfillResult;
+  retryPartitionBackfill: RetryBackfillResult;
   scheduleDryRun: ScheduleDryRunResult;
   sensorDryRun: SensorDryRunResult;
   setAutoMaterializePaused: Scalars['Boolean']['output'];
@@ -2709,6 +2710,10 @@ export type MutationResetSensorArgs = {
 };
 
 export type MutationResumePartitionBackfillArgs = {
+  backfillId: Scalars['String']['input'];
+};
+
+export type MutationRetryPartitionBackfillArgs = {
   backfillId: Scalars['String']['input'];
 };
 
@@ -4385,6 +4390,13 @@ export type ResumeBackfillResult = PythonError | ResumeBackfillSuccess | Unautho
 
 export type ResumeBackfillSuccess = {
   __typename: 'ResumeBackfillSuccess';
+  backfillId: Scalars['String']['output'];
+};
+
+export type RetryBackfillResult = PythonError | RetryBackfillSuccess | UnauthorizedError;
+
+export type RetryBackfillSuccess = {
+  __typename: 'RetryBackfillSuccess';
   backfillId: Scalars['String']['output'];
 };
 
@@ -10123,6 +10135,12 @@ export const buildMutation = (
         : relationshipsToOmit.has('PythonError')
         ? ({} as PythonError)
         : buildPythonError({}, relationshipsToOmit),
+    retryPartitionBackfill:
+      overrides && overrides.hasOwnProperty('retryPartitionBackfill')
+        ? overrides.retryPartitionBackfill!
+        : relationshipsToOmit.has('PythonError')
+        ? ({} as PythonError)
+        : buildPythonError({}, relationshipsToOmit),
     scheduleDryRun:
       overrides && overrides.hasOwnProperty('scheduleDryRun')
         ? overrides.scheduleDryRun!
@@ -12789,6 +12807,18 @@ export const buildResumeBackfillSuccess = (
     __typename: 'ResumeBackfillSuccess',
     backfillId:
       overrides && overrides.hasOwnProperty('backfillId') ? overrides.backfillId! : 'sint',
+  };
+};
+
+export const buildRetryBackfillSuccess = (
+  overrides?: Partial<RetryBackfillSuccess>,
+  _relationshipsToOmit: Set<string> = new Set(),
+): {__typename: 'RetryBackfillSuccess'} & RetryBackfillSuccess => {
+  const relationshipsToOmit: Set<string> = new Set(_relationshipsToOmit);
+  relationshipsToOmit.add('RetryBackfillSuccess');
+  return {
+    __typename: 'RetryBackfillSuccess',
+    backfillId: overrides && overrides.hasOwnProperty('backfillId') ? overrides.backfillId! : 'at',
   };
 };
 
