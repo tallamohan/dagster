@@ -43,6 +43,7 @@ from .backfill import (
     cancel_partition_backfill as cancel_partition_backfill,
     create_and_launch_partition_backfill as create_and_launch_partition_backfill,
     resume_partition_backfill as resume_partition_backfill,
+    retry_partition_backfill as retry_partition_backfill,
 )
 
 if TYPE_CHECKING:
