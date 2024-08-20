@@ -48,16 +48,19 @@ export function useReportEventsModal(asset: Asset | null, onEventReported?: () =
   const [isOpen, setIsOpen] = useState(false);
 
   const dropdownOptions = useMemo(
-    () => [
-      {
-        label: asset?.isPartitioned
-          ? 'Report materialization events'
-          : 'Report materialization event',
-        icon: <Icon name="asset_non_sda" />,
-        onClick: () => setIsOpen(true),
-      },
-    ],
-    [asset?.isPartitioned],
+    () =>
+      asset
+        ? [
+            {
+              label: asset.isPartitioned
+                ? 'Report materialization events'
+                : 'Report materialization event',
+              icon: <Icon name="asset_non_sda" />,
+              onClick: () => setIsOpen(true),
+            },
+          ]
+        : [],
+    [asset],
   );
 
   const element = asset ? (

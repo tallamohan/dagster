@@ -9,7 +9,6 @@ import {
   MenuItem,
   NonIdealState,
   Popover,
-  Tooltip,
 } from '@dagster-io/ui-components';
 import groupBy from 'lodash/groupBy';
 import * as React from 'react';
@@ -24,7 +23,6 @@ import {useUnscopedPermissions} from '../app/Permissions';
 import {QueryRefreshCountdown, RefreshState} from '../app/QueryRefresh';
 import {DefinitionTag} from '../graphql/types';
 import {useSelectionReducer} from '../hooks/useSelectionReducer';
-import {testId} from '../testing/testId';
 import {StaticSetFilter} from '../ui/BaseFilters/useStaticSetFilter';
 import {VirtualizedAssetTable} from '../workspace/VirtualizedAssetTable';
 
@@ -159,24 +157,13 @@ export const AssetTable = ({
           <div style={{flex: 1}} />
           <QueryRefreshCountdown refreshState={refreshState} />
           <Box flex={{alignItems: 'center', gap: 8}}>
-            {checkedAssets.some((c) => !c.definition) ? (
-              <Tooltip content="One or more selected assets are not software-defined and cannot be launched directly.">
-                <Button
-                  intent="primary"
-                  data-testid={testId('materialize-button')}
-                  icon={<Icon name="materialization" />}
-                  disabled
-                >
-                  {checkedAssets.length > 1
-                    ? `Materialize (${checkedAssets.length.toLocaleString()})`
-                    : 'Materialize'}
-                </Button>
-              </Tooltip>
-            ) : (
-              <LaunchAssetExecutionButton
-                scope={{selected: checkedAssets.map((a) => ({...a.definition!, assetKey: a.key}))}}
-              />
-            )}
+            <LaunchAssetExecutionButton
+              scope={{
+                selected: checkedAssets
+                  .filter((a) => !!a.definition)
+                  .map((a) => ({...a.definition!, assetKey: a.key})),
+              }}
+            />
             <MoreActionsDropdown
               selected={checkedAssets}
               clearSelection={() => onToggleAll(false)}
