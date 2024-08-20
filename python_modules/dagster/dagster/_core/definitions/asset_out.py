@@ -164,6 +164,7 @@ class AssetOut(
                 deps=deps,
                 auto_materialize_policy=None,
                 partitions_def=None,
+                kinds=None,
             )
 
     @property
