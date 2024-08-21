@@ -15,7 +15,7 @@ from dagster import (
 from pydantic import PrivateAttr
 from pydantic.fields import Field
 
-from dagster_polars.io_managers.type_routers import resolve_type_router
+from dagster_polars.io_managers.type_routers import TypeRouter, resolve_type_router
 from dagster_polars.io_managers.utils import get_polars_metadata
 
 if TYPE_CHECKING:
@@ -99,6 +99,21 @@ class BasePolarsUPathIOManager(ConfigurableIOManager, UPathIOManager):
         context: InputContext,
     ) -> pl.LazyFrame: ...
 
+    def type_router_is_eager(self, type_router: TypeRouter) -> bool:
+        if type_router.is_base_type:
+            if type_router.typing_type in [Any, type(None), None] or issubclass(
+                type_router.typing_type, pl.DataFrame
+            ):
+                return True
+            elif issubclass(type_router.typing_type, pl.LazyFrame):
+                return False
+            else:
+                raise NotImplementedError(
+                    f"Can't determine if type annotation {type_router.typing_type} corresponds to an eager or lazy DataFrame"
+                )
+        else:
+            return self.type_router_is_eager(type_router.parent_type_router)
+
     def dump_to_path(
         self,
         context: OutputContext,
@@ -114,14 +129,10 @@ class BasePolarsUPathIOManager(ConfigurableIOManager, UPathIOManager):
     ):
         type_router = resolve_type_router(context, context.dagster_type.typing_type)
 
-        if type_router.is_eager:
+        if self.type_router_is_eager(type_router):
             dump_fn = self.write_df_to_path
-        elif type_router.is_lazy:
-            dump_fn = self.sink_df_to_path
         else:
-            raise NotImplementedError(
-                f"Can't dump object for type annotation {context.dagster_type.typing_type}"
-            )
+            dump_fn = self.sink_df_to_path
 
         type_router.dump(obj, path, dump_fn)
 
@@ -145,14 +156,10 @@ class BasePolarsUPathIOManager(ConfigurableIOManager, UPathIOManager):
 
         if ldf is None:
             return None
-        elif type_router.is_eager and ldf is not None:
+        elif self.type_router_is_eager(type_router) and ldf is not None:
             return ldf.collect()
-        elif type_router.is_lazy:
-            return ldf
         else:
-            raise NotImplementedError(
-                f"Can't load object for type annotation {context.dagster_type.typing_type}"
-            )
+            return ldf
 
     def get_metadata(
         self, context: OutputContext, obj: Union[pl.DataFrame, pl.LazyFrame, None]
