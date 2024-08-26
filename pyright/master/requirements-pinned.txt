@@ -37,14 +37,13 @@ asn1crypto==1.5.1
 asttokens==2.4.1
 astunparse==1.6.3
 async-lru==2.0.4
-async-timeout==4.0.3
 attrs==24.2.0
 autodocsumm==0.2.13
 autoflake==2.3.1
 -e python_modules/automation
 avro==1.11.3
 avro-gen3==0.7.13
-aws-sam-translator==1.89.0
+aws-sam-translator==1.91.0
 aws-xray-sdk==2.14.0
 azure-core==1.30.2
 azure-identity==1.17.1
@@ -58,9 +57,9 @@ billiard==4.2.0
 bitmath==1.3.3.1
 bleach==6.1.0
 blinker==1.8.2
-bokeh==3.5.1
-boto3==1.35.4
-botocore==1.35.4
+bokeh==3.5.2
+boto3==1.35.5
+botocore==1.35.5
 buildkite-test-collector==0.1.8
 cachecontrol==0.14.0
 cached-property==1.5.2
@@ -92,7 +91,7 @@ confluent-kafka==2.5.0
 connexion==2.14.2
 contourpy==1.2.1
 coverage==7.6.1
-cron-descriptor==1.4.3
+cron-descriptor==1.4.5
 croniter==3.0.3
 cryptography==43.0.0
 cssutils==2.11.1
@@ -209,7 +208,6 @@ duckdb==1.0.0
 ecdsa==0.19.0
 email-validator==1.3.1
 entrypoints==0.4
-exceptiongroup==1.2.2
 execnet==2.1.1
 executing==2.0.1
 expandvars==0.12.0
@@ -233,7 +231,7 @@ flatbuffers==24.3.25
 fonttools==4.53.1
 fqdn==1.5.1
 frozenlist==1.4.1
-fsspec==2024.3.1
+fsspec==2024.3.0
 gitdb==4.0.11
 gitpython==3.1.43
 giturlparse==0.12.0
@@ -269,8 +267,8 @@ httptools==0.6.1
 httpx==0.27.0
 humanfriendly==10.0
 humanize==4.10.0
-hypothesis==6.111.1
-idna==3.7
+hypothesis==6.111.2
+idna==3.8
 ijson==3.3.0
 imagesize==1.4.1
 importlib-metadata==6.11.0
@@ -317,10 +315,10 @@ kubernetes==30.1.0
 kubernetes-asyncio==30.1.0
 langchain==0.2.9
 langchain-community==0.2.9
-langchain-core==0.2.34
+langchain-core==0.2.35
 langchain-openai==0.1.14
 langchain-text-splitters==0.2.2
-langsmith==0.1.102
+langsmith==0.1.104
 lazy-object-proxy==1.10.0
 leather==0.4.0
 limits==3.13.0
@@ -408,7 +406,7 @@ partd==1.4.2
 path==16.16.0
 pathable==0.4.3
 pathspec==0.12.1
-pathvalidate==3.2.0
+pathvalidate==3.2.1
 pendulum==2.1.2
 pexpect==4.9.0
 pillow==10.4.0
@@ -438,7 +436,7 @@ pyarrow-hotfix==0.6
 pyasn1==0.6.0
 pyasn1-modules==0.4.0
 pycparser==2.22
-pydantic==1.10.17
+pydantic==1.10.18
 pydata-google-auth==1.8.2
 pyflakes==3.2.0
 pygments==2.18.0
@@ -446,7 +444,7 @@ pyjwt==2.9.0
 pymdown-extensions==10.9
 pynacl==1.5.0
 pyopenssl==24.2.1
-pyparsing==3.1.2
+pyparsing==3.1.4
 pypd==1.1.0
 pyproject-api==1.7.1
 pyright==1.1.370
@@ -498,7 +496,7 @@ s3transfer==0.10.2
 scikit-learn==1.5.1
 scipy==1.14.1
 scrapbook==0.5.0
-sdf-cli==0.3.21
+sdf-cli==0.3.23
 seaborn==0.13.2
 selenium==4.23.1
 semver==3.0.2
@@ -538,7 +536,7 @@ sphinxcontrib-serializinghtml==2.0.0
 sqlalchemy==1.4.53
 sqlalchemy-jsonfield==1.0.2
 sqlalchemy-utils==0.41.2
-sqlglot==25.16.0
+sqlglot==25.17.0
 sqlglotrs==0.2.9
 sqlparse==0.5.1
 sshpubkeys==3.3.1
@@ -547,7 +545,7 @@ stack-data==0.6.3
 starlette==0.38.2
 structlog==24.4.0
 sympy==1.13.2
-syrupy==4.6.4
+syrupy==4.7.1
 tabledata==1.3.3
 tabulate==0.9.0
 tblib==3.0.0
@@ -573,11 +571,11 @@ trio==0.26.2
 trio-websocket==0.11.1
 -e examples/experimental/dagster-airlift/examples/tutorial-example
 -e examples/tutorial_notebook_assets
-twilio==9.2.3
+twilio==9.2.4
 twine==1.15.0
 typeguard==4.3.0
 typepy==1.3.2
-typer==0.12.4
+typer==0.12.5
 types-backports==0.1.3
 types-certifi==2021.10.8.3
 types-cffi==1.16.0.20240331
@@ -606,7 +604,7 @@ tzdata==2024.1
 tzlocal==5.2
 uc-micro-py==1.0.3
 unicodecsv==0.14.1
-universal-pathlib==0.2.2
+universal-pathlib==0.2.3
 uri-template==1.3.0
 uritemplate==4.1.1
 urllib3==1.26.19
