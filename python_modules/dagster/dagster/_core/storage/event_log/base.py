@@ -616,3 +616,6 @@ class EventLogStorage(ABC, MayHaveInstanceWeakref[T_DagsterInstance]):
         self, asset_key: AssetKey, partitions: Iterable[str], since_storage_id: int
     ) -> Set[str]:
         raise NotImplementedError()
+
+    def default_run_scoped_event_tailer_offset(self) -> int:
+        return 0

@@ -1,3 +1,5 @@
+import logging
+import math
 import os
 import sys
 import time
@@ -69,33 +71,22 @@ class StepDelegatingExecutor(Executor):
         self._should_verify_step = should_verify_step
 
         self._event_cursor: Optional[str] = None
-        self._pop_events_offset = int(os.getenv("DAGSTER_EXECUTOR_POP_EVENTS_OFFSET", "0"))
 
-        if self._pop_events_offset:
-            # ensure that the offset can never result in looping over the same events over and
-            # over again if every event is from this run
-            self._pop_events_limit = self._pop_events_offset + 1
-        else:
-            self._pop_events_limit = int(os.getenv("DAGSTER_EXECUTOR_POP_EVENTS_LIMIT", "1000"))
+        self._pop_events_limit = int(os.getenv("DAGSTER_EXECUTOR_POP_EVENTS_LIMIT", "1000"))
 
     @property
     def retries(self):
         return self._retries
 
+    def _get_pop_events_offset(self, instance: DagsterInstance):
+        if "DAGSTER_EXECUTOR_POP_EVENTS_OFFSET" in os.environ:
+            return int(os.environ["DAGSTER_EXECUTOR_POP_EVENTS_OFFSET"])
+        return instance.event_log_storage.default_run_scoped_event_tailer_offset()
+
     def _pop_events(
         self, instance: DagsterInstance, run_id: str, seen_storage_ids: Set[int]
     ) -> Sequence[DagsterEvent]:
         adjusted_cursor = self._event_cursor
-
-        if self._pop_events_offset > 0 and self._event_cursor:
-            cursor_obj = EventLogCursor.parse(self._event_cursor)
-            check.invariant(
-                cursor_obj.is_id_cursor(),
-                "Applying a tailer offset only works with an id-based cursor",
-            )
-            adjusted_cursor = EventLogCursor.from_storage_id(
-                cursor_obj.storage_id() - self._pop_events_offset
-            ).to_string()
 
         conn = instance.get_records_for_run(
             run_id,
@@ -103,7 +94,6 @@ class StepDelegatingExecutor(Executor):
             of_type=set(DagsterEventType),
             limit=self._pop_events_limit,
         )
-        self._event_cursor = conn.cursor
 
         dagster_events = [
             record.event_log_entry.dagster_event
@@ -111,7 +101,41 @@ class StepDelegatingExecutor(Executor):
             if record.event_log_entry.dagster_event and record.storage_id not in seen_storage_ids
         ]
 
-        seen_storage_ids.update(record.storage_id for record in conn.records)
+        returned_storage_ids = {record.storage_id for record in conn.records}
+
+        pop_events_offset = self._get_pop_events_offset(instance)
+
+        if not pop_events_offset:
+            self._event_cursor = conn.cursor
+        elif (
+            len(returned_storage_ids) == self._pop_events_limit
+            and returned_storage_ids <= seen_storage_ids
+        ):
+            # Start the next cursor halfway through the returned list
+            desired_next_storage_id = conn.records[
+                math.ceil(self._pop_events_limit / 2) - 1
+            ].storage_id
+            self._event_cursor = EventLogCursor.from_storage_id(desired_next_storage_id).to_string()
+
+            logging.getLogger("dagster").warn(
+                f"Event tailer query returned a list of {self._pop_events_limit} storage IDs that had already been returned before. Setting the cursor to {desired_next_storage_id} to ensure it advances."
+            )
+        else:
+            cursor_obj = EventLogCursor.parse(conn.cursor)
+            check.invariant(
+                cursor_obj.is_id_cursor(),
+                "Applying a tailer offset only works with an id-based cursor",
+            )
+            # Apply offset for next query (while also making sure that the cursor doesn't backtrack)
+            current_cursor_storage_id = (
+                EventLogCursor.parse(self._event_cursor).storage_id() if self._event_cursor else 0
+            )
+            new_storage_id = max(
+                current_cursor_storage_id, cursor_obj.storage_id() - pop_events_offset
+            )
+            self._event_cursor = EventLogCursor.from_storage_id(new_storage_id).to_string()
+
+        seen_storage_ids.update(returned_storage_ids)
 
         return dagster_events
 
