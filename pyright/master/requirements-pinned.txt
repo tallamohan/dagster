@@ -25,7 +25,6 @@ apache-airflow-providers-sqlite==3.8.2
 apeye==1.4.1
 apeye-core==1.1.5
 apispec==6.6.1
-appnope==0.1.4
 argcomplete==3.5.0
 argon2-cffi==23.1.0
 argon2-cffi-bindings==21.2.0
@@ -58,10 +57,10 @@ bitmath==1.3.3.1
 bleach==6.1.0
 blinker==1.8.2
 bokeh==3.5.2
-boto3==1.35.12
-boto3-stubs-lite==1.35.12
-botocore==1.35.12
-botocore-stubs==1.35.12
+boto3==1.35.14
+boto3-stubs-lite==1.35.14
+botocore==1.35.14
+botocore-stubs==1.35.14
 buildkite-test-collector==0.1.9
 cachecontrol==0.14.0
 cached-property==1.5.2
@@ -73,7 +72,7 @@ cattrs==24.1.0
 celery==5.4.0
 certifi==2024.8.30
 cffi==1.17.1
-cfn-lint==1.12.3
+cfn-lint==1.12.4
 chardet==5.2.0
 charset-normalizer==3.3.2
 click==8.1.7
@@ -215,10 +214,10 @@ execnet==2.1.1
 executing==2.1.0
 expandvars==0.12.0
 faiss-cpu==1.8.0
-fastavro==1.9.5
+fastavro==1.9.7
 fastjsonschema==2.20.0
 -e examples/feature_graph_backed_assets
-filelock==3.15.4
+filelock==3.16.0
 flask==2.2.5
 flask-appbuilder==4.3.6
 flask-babel==2.0.0
@@ -239,7 +238,7 @@ gitdb==4.0.11
 gitpython==3.1.43
 giturlparse==0.12.0
 google-api-core==2.19.2
-google-api-python-client==2.143.0
+google-api-python-client==2.144.0
 google-auth==2.34.0
 google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.1
@@ -256,6 +255,7 @@ graphql-core==3.2.4
 graphql-relay==3.2.0
 graphviz==0.20.3
 great-expectations==0.17.11
+greenlet==3.0.3
 grpcio==1.66.1
 grpcio-health-checking==1.62.3
 grpcio-status==1.62.3
@@ -270,7 +270,7 @@ httptools==0.6.1
 httpx==0.27.2
 humanfriendly==10.0
 humanize==4.10.0
-hypothesis==6.111.2
+hypothesis==6.112.0
 idna==3.8
 ijson==3.3.0
 imagesize==1.4.1
@@ -321,7 +321,7 @@ langchain-community==0.2.9
 langchain-core==0.2.38
 langchain-openai==0.1.14
 langchain-text-splitters==0.2.4
-langsmith==0.1.114
+langsmith==0.1.116
 lazy-object-proxy==1.10.0
 leather==0.4.0
 limits==3.13.0
@@ -349,11 +349,11 @@ mistune==3.0.2
 mixpanel==4.10.1
 mlflow==1.27.0
 mock==3.0.5
-more-itertools==10.4.0
+more-itertools==10.5.0
 morefs==0.2.2
 moto==4.2.14
 mpmath==1.3.0
-msal==1.30.0
+msal==1.31.0
 msal-extensions==1.2.0
 msgpack==1.0.8
 multidict==6.0.5
@@ -375,13 +375,25 @@ noteable-origami==1.1.5
 notebook==7.2.2
 notebook-shim==0.2.4
 numpy==1.26.4
+nvidia-cublas-cu12==12.1.3.1
+nvidia-cuda-cupti-cu12==12.1.105
+nvidia-cuda-nvrtc-cu12==12.1.105
+nvidia-cuda-runtime-cu12==12.1.105
+nvidia-cudnn-cu12==9.1.0.70
+nvidia-cufft-cu12==11.0.2.54
+nvidia-curand-cu12==10.3.2.106
+nvidia-cusolver-cu12==11.4.5.107
+nvidia-cusparse-cu12==12.1.0.106
+nvidia-nccl-cu12==2.20.5
+nvidia-nvjitlink-cu12==12.6.68
+nvidia-nvtx-cu12==12.1.105
 oauth2client==4.1.3
 oauthlib==3.2.2
 objgraph==3.6.1
 onnx==1.16.2
 onnxconverter-common==1.13.0
 onnxruntime==1.19.2
-openai==1.43.0
+openai==1.44.0
 openapi-schema-validator==0.6.2
 openapi-spec-validator==0.7.1
 opentelemetry-api==1.27.0
@@ -418,7 +430,7 @@ pexpect==4.9.0
 pillow==10.4.0
 pip==24.2
 pkginfo==1.11.1
-platformdirs==4.2.2
+platformdirs==4.3.2
 plotly==5.24.0
 pluggy==1.5.0
 ply==3.11
@@ -498,7 +510,7 @@ rich-argparse==1.5.2
 rpds-py==0.20.0
 rsa==4.9
 ruamel-yaml==0.17.17
-ruff==0.6.3
+ruff==0.6.4
 s3transfer==0.10.2
 scikit-learn==1.5.1
 scipy==1.14.1
@@ -517,9 +529,9 @@ simplejson==3.19.3
 six==1.16.0
 skein==0.8.2
 skl2onnx==1.17.0
-slack-sdk==3.31.0
+slack-sdk==3.32.0
 sling==1.2.18
-sling-mac-arm64==1.2.18
+sling-linux-amd64==1.2.18
 smmap==5.0.1
 sniffio==1.3.1
 snowballstemmer==2.2.0
@@ -528,7 +540,7 @@ snowflake-sqlalchemy==1.6.1
 sortedcontainers==2.4.0
 soupsieve==2.6
 sphinx==8.0.2
-sphinx-autodoc-typehints==2.3.0
+sphinx-autodoc-typehints==2.4.0
 sphinx-jinja2-compat==0.3.0
 sphinx-prompt==1.9.0
 sphinx-tabs==3.4.5
@@ -539,16 +551,16 @@ sphinxcontrib-htmlhelp==2.1.0
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==2.0.0
 sphinxcontrib-serializinghtml==2.0.0
-sqlalchemy==1.4.53
+sqlalchemy==1.4.54
 sqlalchemy-jsonfield==1.0.2
 sqlalchemy-utils==0.41.2
-sqlglot==25.19.0
-sqlglotrs==0.2.10
+sqlglot==25.20.1
+sqlglotrs==0.2.12
 sqlparse==0.5.1
 sshpubkeys==3.3.1
 sshtunnel==0.4.0
 stack-data==0.6.3
-starlette==0.38.4
+starlette==0.38.5
 structlog==24.4.0
 sympy==1.13.2
 syrupy==4.7.1
@@ -575,6 +587,7 @@ tqdm==4.66.5
 traitlets==5.14.3
 trio==0.26.2
 trio-websocket==0.11.1
+triton==3.0.0
 -e examples/experimental/dagster-airlift/examples/tutorial-example
 -e examples/tutorial_notebook_assets
 twilio==9.3.0
@@ -582,7 +595,7 @@ twine==1.15.0
 typeguard==4.3.0
 typepy==1.3.2
 typer==0.12.5
-types-awscrt==0.21.2
+types-awscrt==0.21.5
 types-backports==0.1.3
 types-certifi==2021.10.8.3
 types-cffi==1.16.0.20240331
@@ -591,14 +604,14 @@ types-croniter==3.0.3.20240731
 types-cryptography==3.3.23.2
 types-mock==5.1.0.20240425
 types-paramiko==3.4.0.20240423
-types-protobuf==5.27.0.20240626
+types-protobuf==5.27.0.20240907
 types-pyopenssl==24.1.0.20240722
-types-python-dateutil==2.9.0.20240821
+types-python-dateutil==2.9.0.20240906
 types-pytz==2024.1.0.20240417
 types-pyyaml==6.0.12.20240808
 types-requests==2.31.0.6
 types-s3transfer==0.10.2
-types-setuptools==74.0.0.20240831
+types-setuptools==74.1.0.20240907
 types-simplejson==3.19.0.20240801
 types-six==1.16.21.20240513
 types-sqlalchemy==1.4.53.34
@@ -612,7 +625,7 @@ tzdata==2024.1
 tzlocal==5.2
 uc-micro-py==1.0.3
 unicodecsv==0.14.1
-universal-pathlib==0.2.3
+universal-pathlib==0.2.5
 uri-template==1.3.0
 uritemplate==4.1.1
 urllib3==1.26.20
@@ -621,7 +634,7 @@ uvicorn==0.30.6
 uvloop==0.20.0
 vine==5.1.0
 virtualenv==20.25.0
-wandb==0.17.8
+wandb==0.17.9
 watchdog==5.0.2
 watchfiles==0.24.0
 wcwidth==0.2.13
@@ -644,6 +657,6 @@ wtforms==3.0.1
 xgboost==2.1.1
 xmltodict==0.12.0
 xyzservices==2024.9.0
-yarl==1.9.11
+yarl==1.11.0
 zict==3.0.0
 zipp==3.20.1
