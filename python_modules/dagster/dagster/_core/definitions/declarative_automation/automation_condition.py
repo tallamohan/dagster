@@ -482,7 +482,7 @@ class AutomationCondition(ABC):
     @public
     @experimental
     @staticmethod
-    def on_missing() -> "AutomationCondition":
+    def on_missing() -> "AndAutomationCondition":
         """Returns an AutomationCondition which will cause missing asset partitions to be materialized as soon as possible,
         after all of their dependencies have been materialized.
 
