@@ -1,5 +1,6 @@
 import datetime
 import json
+import time
 from abc import ABC
 from functools import cached_property
 from typing import Any, Dict, List
@@ -181,6 +182,7 @@ class AirflowInstance:
             dag_run = self.get_dag_run(dag_id, run_id)
             if dag_run.finished:
                 return
+            time.sleep(1)
         raise DagsterError(f"Timed out waiting for airflow run {run_id} to finish.")
 
     @staticmethod
@@ -195,6 +197,16 @@ class AirflowInstance:
     @staticmethod
     def airflow_date_from_datetime(datetime: datetime.datetime) -> str:
         return datetime.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+
+    def delete_run(self, dag_id: str, run_id: str) -> None:
+        response = self.auth_backend.get_session().delete(
+            f"{self.get_api_url()}/dags/{dag_id}/dagRuns/{run_id}"
+        )
+        if response.status_code != 204:
+            raise DagsterError(
+                f"Failed to delete run for {dag_id}/{run_id}. Status code: {response.status_code}, Message: {response.text}"
+            )
+        return None
 
 
 @record
