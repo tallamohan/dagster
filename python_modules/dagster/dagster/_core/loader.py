@@ -1,3 +1,4 @@
+import asyncio
 from abc import ABC, abstractmethod
 from functools import partial
 from typing import TYPE_CHECKING, Dict, Generic, Iterable, Optional, Type, TypeVar
@@ -82,14 +83,12 @@ class InstanceLoadableBy(ABC, Generic[TKey]):
     @classmethod
     @abstractmethod
     async def _batch_load(
-        cls,
-        keys: Iterable[TKey],
-        instance: "DagsterInstance",
+        cls, keys: Iterable[TKey], instance: "DagsterInstance"
     ) -> Iterable[Optional[Self]]:
         raise NotImplementedError()
 
     @classmethod
-    async def gen(cls, context: LoadingContext, id: TKey) -> Self:
+    async def gen(cls, context: LoadingContext, id: TKey) -> Optional[Self]:
         """Fetch an object by its id."""
         loader = context.get_loader_for(cls)
         return await loader.load(id)
@@ -101,3 +100,19 @@ class InstanceLoadableBy(ABC, Generic[TKey]):
         """Fetch N objects by their id."""
         loader = context.get_loader_for(cls)
         return await loader.load_many(ids)
+
+    @classmethod
+    def get(cls, context: LoadingContext, id: TKey) -> Optional[Self]:
+        """Fetch an object by its id."""
+        return asyncio.run(cls.gen(context, id))
+
+    @classmethod
+    def get_many(cls, context: LoadingContext, ids: Iterable[TKey]) -> Iterable[Self]:
+        """Fetch N objects by their id."""
+        return filter(None, asyncio.run(cls.gen_many(context, ids)))
+
+    @classmethod
+    def prepare(cls, context: LoadingContext, ids: Iterable[TKey]) -> None:
+        """Ensure the provided ids will be fetched on the next query."""
+        loader = context.get_loader_for(cls)
+        loader.enqueue(ids)

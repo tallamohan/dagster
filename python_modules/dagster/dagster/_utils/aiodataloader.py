@@ -139,6 +139,10 @@ class DataLoader(Generic[KeyT, ReturnT]):
         self.do_resolve_reject(key, future)
         return future
 
+    def enqueue(self, keys: Iterable[KeyT]) -> None:
+        for key in keys:
+            self._queue.append(Loader(key=key, future=self.loop.create_future()))
+
     def do_resolve_reject(self, key: KeyT, future: "Future[ReturnT]") -> None:
         # Enqueue this Future to be dispatched.
         self._queue.append(Loader(key=key, future=future))
