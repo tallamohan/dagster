@@ -121,7 +121,7 @@ class AssetGraphView(LoadingContext):
         )
 
     @property
-    def instance(self) -> DagsterInstance:
+    def instance(self) -> "DagsterInstance":
         return self._instance
 
     @property
