@@ -656,6 +656,10 @@ class RunRecord(
 
         return result_map.values()
 
+    @classmethod
+    def _batch_load_size(cls) -> int:
+        return 100
+
 
 @whitelist_for_serdes
 class RunPartitionData(

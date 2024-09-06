@@ -1,11 +1,13 @@
 import asyncio
+import functools
 from abc import ABC, abstractmethod
 from functools import partial
-from typing import TYPE_CHECKING, Dict, Generic, Iterable, Optional, Type, TypeVar
+from typing import TYPE_CHECKING, Dict, Generic, Iterable, Optional, Sequence, Type, TypeVar
 
 from typing_extensions import Self
 
 import dagster._check as check
+from dagster._core.instance import DynamicPartitionsStore
 from dagster._utils.aiodataloader import DataLoader
 
 TResult = TypeVar("TResult")
@@ -43,7 +45,7 @@ Additional resources:
 """
 
 
-class LoadingContext(ABC):
+class LoadingContext(ABC, DynamicPartitionsStore):
     """A scoped object in which Loadable objects will be fetched in batches and cached.
 
     Expected to be implemented by request scoped context objects that have access to the DagsterInstance.
@@ -69,9 +71,32 @@ class LoadingContext(ABC):
                     ttype._batch_load,  # noqa
                     instance=self.instance,
                 ),
+                max_batch_size=ttype._batch_load_size(),  # noqa
             )
 
         return self.loaders[ttype]
+
+    @functools.lru_cache(maxsize=None)
+    def get_dynamic_partitions(self, partitions_def_name: str) -> Sequence[str]:
+        return self.instance.get_dynamic_partitions(partitions_def_name)
+
+    @functools.lru_cache(maxsize=None)
+    def has_dynamic_partition(self, partitions_def_name: str, partition_key: str) -> bool:
+        return partition_key in self.get_dynamic_partitions(partitions_def_name=partitions_def_name)
+
+
+class EphemeralLoadingContext(LoadingContext):
+    def __init__(self, instance: "DagsterInstance"):
+        self._instance = instance
+        self._loaders = {}
+
+    @property
+    def instance(self) -> "DagsterInstance":
+        return self._instance
+
+    @property
+    def loaders(self) -> Dict[Type, DataLoader]:
+        return self._loaders
 
 
 # Expected there may be other "Loadable" base classes based on what is needed to load.
@@ -86,6 +111,11 @@ class InstanceLoadableBy(ABC, Generic[TKey]):
         cls, keys: Iterable[TKey], instance: "DagsterInstance"
     ) -> Iterable[Optional[Self]]:
         raise NotImplementedError()
+
+    @classmethod
+    def _batch_load_size(cls) -> Optional[int]:
+        """Maximum batch size when loading."""
+        return None
 
     @classmethod
     async def gen(cls, context: LoadingContext, id: TKey) -> Optional[Self]:
