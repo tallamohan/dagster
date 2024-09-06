@@ -59,7 +59,6 @@ SOC
 Snowflake
 Tensorflow
 Twilio
-We have
 [Cc]onfig
 [Mm]aterializable
 [Mm]aterializations
@@ -88,4 +87,3 @@ toolchain
 uncomment
 vCPU
 vCPUs
-we have
