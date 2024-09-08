@@ -2,6 +2,7 @@ from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     Dict,
     Iterable,
     List,
@@ -9,6 +10,7 @@ from typing import (
     NamedTuple,
     Optional,
     Sequence,
+    Tuple,
     Type,
     Union,
 )
@@ -42,7 +44,7 @@ from dagster._core.execution.build_resources import wrap_resources_for_execution
 from dagster._core.execution.with_resources import with_resources
 from dagster._core.executor.base import Executor
 from dagster._core.instance import DagsterInstance
-from dagster._record import IHaveNew, record_custom
+from dagster._record import IHaveNew, copy, record_custom
 from dagster._utils.cached_method import cached_method
 from dagster._utils.warnings import disable_dagster_warnings
 
@@ -716,3 +718,95 @@ class Definitions(IHaveNew):
         """Returns an AssetSpec object for every asset contained inside the Definitions object."""
         asset_graph = self.get_asset_graph()
         return [asset_node.to_asset_spec() for asset_node in asset_graph.asset_nodes]
+
+    def map_asset_specs(self, fn: Callable[[AssetSpec], AssetSpec]) -> "Definitions":
+        """Applies the given mapping function to every asset spec within this Definitions object,
+        including both external asset specs and asset specs within AssetsDefinitions.
+
+        Returns a new Definitions object with the transformed assets; does not mutate this object.
+
+        If the mapping function produces asset specs with new asset keys, downstream assets and
+        asset checks will be updated so that they depend on the new key.
+
+        Does not support Definitions  objects that contain CacheableAssetsDefinitions.
+
+        Args:
+            fn (Callable[[AssetSpec], AssetSpec]): A function that accepts an AssetSpec and returns
+                a new AssetSpec.
+
+        Returns:
+            Definitions: A new Definitions object with the transformed assets.
+        """
+        if self.assets is None:
+            return self
+
+        new_keys_by_old_key: Dict[AssetKey, AssetKey] = {}
+
+        assets_def_new_specs: List[Tuple[AssetsDefinition, Sequence[AssetSpec]]] = []
+        new_external_asset_specs: List[AssetSpec] = []
+
+        for el in self.assets:
+            if isinstance(el, AssetsDefinition):
+                new_specs = []
+                for spec in el.specs:
+                    new_spec = fn(spec)
+                    new_specs.append(new_spec)
+                    if new_spec.key != spec.key:
+                        new_keys_by_old_key[spec.key] = new_spec.key
+                assets_def_new_specs.append((el, new_specs))
+            elif isinstance(el, AssetSpec):
+                new_spec = fn(el)
+                if new_spec.key != el.key:
+                    new_keys_by_old_key[el.key] = new_spec.key
+                new_external_asset_specs.append(new_spec)
+
+        # build result_assets
+        result_assets = []
+
+        for assets_def, new_specs in assets_def_new_specs:
+            new_asset_specs_replaced_deps = [
+                replace_asset_spec_dep_asset_keys(spec, new_keys_by_old_key) for spec in new_specs
+            ]
+            result_assets.append(
+                assets_def.with_replaced_asset_specs(
+                    specs=new_asset_specs_replaced_deps,
+                    new_asset_keys_by_old_asset_key=new_keys_by_old_key,
+                )
+            )
+
+        for spec in new_external_asset_specs:
+            result_assets.append(replace_asset_spec_dep_asset_keys(spec, new_keys_by_old_key))
+
+        # build result_asset_checks
+        result_asset_checks = []
+        for asset_checks_def in self.asset_checks or []:
+            result_asset_checks.append(
+                asset_checks_def.with_replaced_asset_specs(
+                    specs=[],
+                    new_asset_keys_by_old_asset_key=new_keys_by_old_key,
+                )
+            )
+
+        return copy(self, assets=result_assets, asset_checks=result_asset_checks)
+
+
+def replace_asset_spec_dep_asset_keys(
+    spec: AssetSpec, new_keys_by_old_key: Mapping[AssetKey, AssetKey]
+) -> AssetSpec:
+    if not new_keys_by_old_key:
+        return spec
+
+    new_deps = []
+    any_changed = False
+    for dep in spec.deps:
+        new_key = new_keys_by_old_key.get(dep.asset_key)
+        if new_key is not None:
+            new_deps.append(dep._replace(asset_key=new_key))
+            any_changed = True
+        else:
+            new_deps.append(dep)
+
+    if any_changed:
+        return spec._replace(deps=new_deps)
+    else:
+        return spec

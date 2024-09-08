@@ -1085,3 +1085,80 @@ def test_definitions_dedupe_reference_equality():
     assert len(defs.jobs) == 2
     assert len(defs.sensors) == 2
     assert len(defs.schedules) == 2
+
+
+def test_map_asset_specs_single_basic_asset() -> None:
+    @asset
+    def asset1():
+        pass
+
+    mapped_defs = Definitions(assets=[asset1]).map_asset_specs(
+        lambda spec: spec._replace(group_name="yolo")
+    )
+    all_asset_specs = mapped_defs.get_all_asset_specs()
+    assert len(all_asset_specs) == 1
+    assert all_asset_specs[0].group_name == "yolo"
+    assert all_asset_specs[0].key == asset1.key
+    assert len(mapped_defs.assets) == 1
+    assert isinstance(mapped_defs.assets[0], AssetsDefinition)
+
+
+def test_map_asset_specs_a_couple_specs() -> None:
+    mapped_defs = Definitions(assets=[AssetSpec("a1"), AssetSpec("a2")]).map_asset_specs(
+        lambda spec: spec._replace(group_name="yolo")
+    )
+    all_asset_specs = mapped_defs.get_all_asset_specs()
+    assert len(all_asset_specs) == 2
+
+    assert all_asset_specs[0].group_name == "yolo"
+    assert all_asset_specs[0].key == AssetKey("a1")
+    assert all_asset_specs[1].group_name == "yolo"
+    assert all_asset_specs[1].key == AssetKey("a2")
+
+    assert len(mapped_defs.assets) == 2
+
+
+def test_map_asset_specs_two_specs_with_dep() -> None:
+    mapped_defs = Definitions(
+        assets=[AssetSpec("a1"), AssetSpec("a2", deps=[AssetDep("a1")])]
+    ).map_asset_specs(lambda spec: spec._replace(key=spec.key.with_prefix(["prefix"])))
+    all_asset_specs = mapped_defs.get_all_asset_specs()
+    assert len(all_asset_specs) == 2
+
+    assert all_asset_specs[0].key == AssetKey(["prefix", "a1"])
+    assert all_asset_specs[1].key == AssetKey(["prefix", "a2"])
+    assert all_asset_specs[1].deps == [AssetDep(["prefix", "a1"])]
+
+    assert len(mapped_defs.assets) == 2
+
+
+def test_map_asset_specs_independent_asset_check() -> None:
+    @asset_check(asset="a1")
+    def asset_check1():
+        return AssetCheckResult(passed=True)
+
+    mapped_defs = Definitions(
+        assets=[AssetSpec("a1")], asset_checks=[asset_check1]
+    ).map_asset_specs(lambda spec: spec._replace(key=spec.key.with_prefix(["prefix"])))
+    all_asset_specs = mapped_defs.get_all_asset_specs()
+    assert len(all_asset_specs) == 1
+
+    assert all_asset_specs[0].key == AssetKey(["prefix", "a1"])
+    assert len(mapped_defs.assets) == 1
+    assert len(mapped_defs.asset_checks) == 1
+    assert len(mapped_defs.asset_checks[0].check_specs) == 1
+    assert next(iter(mapped_defs.asset_checks[0].check_specs)).asset_key == AssetKey(
+        ["prefix", "a1"]
+    )
+
+
+"""
+Other tests to add:
+- AssetsDefinitions that depend on each other
+- AssetsDefinitions with dependencies inside
+- AssetsDefinitions that have checks
+- SourceAsset
+- CacheableAssetsDefinition (raise an error)
+
+In all these cases, execute the actual computations to make sure the AssetsDefinitions are sensible
+"""
