@@ -19,6 +19,7 @@ const sidebars: SidebarsConfig = {
                 {
                     type: 'category',
                     label: 'Create a pipeline',
+                    link: { type: 'doc', id: 'guides/pipelines' },
                     items: [
                         'guides/data-assets',
                         'guides/metadata',
@@ -37,10 +38,7 @@ const sidebars: SidebarsConfig = {
                 {
                     type: 'category',
                     label: 'Abstracting logic',
-                    items: [
-                        'guides/asset-factories',
-                        'guides/asset-factories-with-deps',
-                    ],
+                    items: ['guides/asset-factories', 'guides/asset-factories-with-deps'],
                 },
                         'guides/ingesting-data',
                         'guides/transform-dbt',
@@ -96,10 +94,7 @@ const sidebars: SidebarsConfig = {
                 {
                     type: 'category',
                     label: 'Dagster Plus',
-                    items: [
-                        'guides/dagster-plus',
-                        'guides/self-hosted-to-dagster-plus',
-                    ],
+                    items: ['guides/dagster-plus', 'guides/self-hosted-to-dagster-plus'],
                 },
                 'guides/secrets',
                 'guides/code-locations',
