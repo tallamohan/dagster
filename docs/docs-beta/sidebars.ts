@@ -31,7 +31,7 @@ const sidebars: SidebarsConfig = {
                     label: 'Configure behavior',
                     items: [
                         'guides/configuring-assets',
-                        'todo',
+                        'todo',  // configuring pipelines
                     ],
                 },
                 {
@@ -42,26 +42,20 @@ const sidebars: SidebarsConfig = {
                         'guides/asset-factories-with-deps',
                     ],
                 },
-                {
-                    type: 'category',
-                    label: 'Common use cases',
-                    items: [
                         'guides/ingesting-data',
                         'guides/transform-dbt',
-                        'todo',
-                    ],
-                },
+                        'todo', // backfill
             ],
         },
         {
             type: 'category',
-            label: 'Scale',
+            label: 'Develop',
             items: [
                 {
                     type: 'category',
                     label: 'Integrate with systems',
                     items: [
-                        'todo',
+                        'guides/resources',
                         'guides/non-python',
                         'todo',
                         'guides/io-managers',
@@ -80,8 +74,8 @@ const sidebars: SidebarsConfig = {
                     type: 'category',
                     label: 'Automate Pipelines',
                     items: [
-                        'todo',
-                        'todo',
+                        'guides/schedules',
+                        'guides/sensors',
                         'guides/asset-sensors',
                     ],
                 },
@@ -96,7 +90,7 @@ const sidebars: SidebarsConfig = {
                     label: 'Self-hosting Dagster',
                     items: [
                         'guides/kubernetes',
-                        'todo',
+                        'guides/docker',
                     ],
                 },
                 {
