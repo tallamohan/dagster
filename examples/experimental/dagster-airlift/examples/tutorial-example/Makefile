@@ -9,6 +9,7 @@ export TUTORIAL_EXAMPLE_DIR := $(MAKEFILE_DIR)
 export DAGSTER_HOME := $(MAKEFILE_DIR)/.dagster_home
 export AIRFLOW_HOME := $(MAKEFILE_DIR)/.airflow_home
 export TUTORIAL_DBT_PROJECT_DIR := $(MAKEFILE_DIR)/tutorial_example/shared/dbt
+export DAGSTER_AIRLIFT_PROXIED_STATE_DIR := $(MAKEFILE_DIR)/tutorial_example/airflow_dags/proxied_state
 export DBT_PROFILES_DIR := $(MAKEFILE_DIR)/tutorial_example/shared/dbt
 export DAGSTER_URL := http://localhost:3000
 
@@ -23,7 +24,7 @@ wipe: ## Wipe out all the files created by the Makefile
 
 airflow_install:
 	pip install uv && \
-	uv pip install dagster-airlift[in-airflow] && \
+	uv pip install dagster-airlift[in-airflow,dbt,tutorial] && \
 	uv pip install -e $(MAKEFILE_DIR)
 
 airflow_setup:
