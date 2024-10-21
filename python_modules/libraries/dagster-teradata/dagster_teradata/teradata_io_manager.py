@@ -19,7 +19,7 @@ from packaging.version import Version
 from pydantic import Field
 
 from teradatasql import ProgrammingError
-from dagster_teradata.resource import TeradataResource
+from dagster_teradata.resources import TeradataResource
 
 TERADATA_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 

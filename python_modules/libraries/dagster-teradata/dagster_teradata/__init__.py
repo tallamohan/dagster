@@ -10,3 +10,4 @@ from dagster_teradata.resources import (
 from dagster_teradata.version import __version__
 
 DagsterLibraryRegistry.register("dagster-teradata", __version__)
+
